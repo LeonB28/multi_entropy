@@ -1,0 +1,10 @@
+[project]
+name = "leon-cond-entropy"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "polars>=1.30.0",
+    "ruff>=0.11.13",
+]
