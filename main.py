@@ -45,13 +45,17 @@ def generate_combinations(
     return result_combinations
 
 
-def extract_column_combinations(n_combinations: int, column_list: List[str]) -> List[List[str]]:
+def extract_column_combinations(
+    n_combinations: int, column_list: List[str]
+) -> List[List[str]]:
     number_of_elements = 2  # start with 2 elements
     total_collected_combinations = 0
     combined_list = []
     while total_collected_combinations < n_combinations:
         new_combs = generate_combinations(
-            number_of_elements, n_combinations - total_collected_combinations, column_list
+            number_of_elements,
+            n_combinations - total_collected_combinations,
+            column_list,
         )
         combined_list.extend(new_combs)
         total_collected_combinations += len(new_combs)
@@ -71,7 +75,10 @@ def multi_entropy(ldf: pl.LazyFrame, n: int, engine: EngineType) -> None:
     columns_combinations = extract_column_combinations(n, cols)
 
     entropy_exprs = [
-        pl.concat_str(columns, separator="_").unique_counts().entropy().alias(f"{'_'.join(columns)}")
+        pl.concat_str(columns, separator="_")
+        .unique_counts()
+        .entropy()
+        .alias(f"{'_'.join(columns)}")
         for columns in columns_combinations
     ]
     with_entropy_calculations = ldf.select(entropy_exprs)
@@ -79,11 +86,15 @@ def multi_entropy(ldf: pl.LazyFrame, n: int, engine: EngineType) -> None:
 
 
 if __name__ == "__main__":
-    df = pl.scan_csv("~/data-sets/stackoverflow_full.csv").drop("id")
+    path = "example-data/stackoverflow_full.csv"
+    df = pl.scan_csv(path).drop("id")
 
     start_time = time.time()
+    print("running with in-memory engine...")
     multi_entropy(df, 1000, "in-memory")
     print(time.time() - start_time)
+
+    print("running with streaming engine...")
     start_time = time.time()
-    multi_entropy(df,1000, "streaming")
+    multi_entropy(df, 1000, "streaming")
     print(time.time() - start_time)
