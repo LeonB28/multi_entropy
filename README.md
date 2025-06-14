@@ -1,4 +1,4 @@
-## Creates entropies for many columns in using polars
+## Creates entropies for many columns using polars
 It runs first with in-memory engine and then with streaming
 
 For the example - it runs on Stack Overflow dataset from Kaggle 
